@@ -13,7 +13,7 @@ library(ggplot2)
 mdata <- read_csv("/Users/chris/Documents/RStudio/mdata.csv")
 
 ```
-
+#link https://github.com/chriskopreski/EMN-Project/blob/master/mdata.csv?raw=true
 
 ```{r}
 names(mdata) <- c("Timestamp","Year","Band","Musician","Producer","Technician","Listen","Interest","Email")
