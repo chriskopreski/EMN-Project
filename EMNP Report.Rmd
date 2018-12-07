@@ -1,0 +1,159 @@
+---
+title: "EMNP Report"
+author: "Chris Kopreski"
+date: "11/22/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(dplyr)
+library(ggplot2)
+mdata <- read_csv("/Users/chris/Documents/RStudio/mdata.csv")
+
+```
+
+
+```{r}
+names(mdata) <- c("Timestamp","Year","Band","Musician","Producer","Technician","Listen","Interest","Email")
+names(mdata)
+```
+```{r}
+percent.interest<- mdata %>%
+  summarise(
+    yes.pct = sum(Interest == "Yes") / length(Interest),
+     no.pct = sum(Interest == "No") / length(Interest),
+    maybe.pct = sum(Interest == "Maybe") / length(Interest)
+  )
+
+percent_interest <- as.matrix(percent.interest)
+percent_interest
+barplot(percent_interest)
+```
+
+
+```{r}
+percent.interest.skills<- mdata %>%
+  select(Interest, Musician, Producer, Technician) %>%
+  filter(Musician=="Yes" | Producer=="Yes" | Technician=="Yes") %>%
+  summarise(
+    yes.pct = sum(Interest == "Yes") / length(Interest),
+     no.pct = sum(Interest == "No") / length(Interest),
+    maybe.pct = sum(Interest == "Maybe") / length(Interest)
+  )
+
+percent_interest_skills <- as.matrix(percent.interest.skills)
+percent_interest_skills
+```
+
+```{r}
+percent.interest.noskills<- mdata %>%
+  select(Interest, Musician, Producer, Technician) %>%
+  filter(Musician=="No", Producer=="No", Technician=="No") %>%
+  summarise(
+    yes.pct = sum(Interest == "Yes") / length(Interest),
+     no.pct = sum(Interest == "No") / length(Interest),
+    maybe.pct = sum(Interest == "Maybe") / length(Interest)
+  )
+
+percent_interest_noskills <- as.matrix(percent.interest.noskills)
+percent_interest_noskills
+```
+
+```{r}
+dat1 <- data.frame(Interest = factor(c("Yes", "No", "Maybe","Yes", "No", "Maybe"), levels=c("Yes","Maybe","No")),
+  Frequency = factor(c(0.5454545, 0.1590909, 0.2954545, 0.08333333, 0.5, 0.4166667)),
+  Skill = factor(c("Skill", "Skill", "Skill", "No Skill", "No Skill","No Skill"))
+)
+
+dat1
+
+ggplot(data=dat1, aes(x=Interest, y=Frequency, fill=Skill)) +
+    geom_bar(stat="identity", position=position_dodge())
+
+```
+
+
+```{r}
+pct.email <- mdata %>%
+  summarise(
+    pct.email = sum(!is.na(Email)) / length(Email),
+    pct.noemail = 1 - (pct.email)
+  )
+  
+percent_email_total <- as.matrix(pct.email)
+percent_email_total
+barplot(percent_email_total)
+```
+
+
+```{r}
+pct.email.skills <- mdata %>%
+  select(Email, Musician, Producer, Technician) %>%
+  filter(Musician=="Yes" | Producer=="Yes" | Technician=="Yes") %>%
+  summarise(
+    pct.email = sum(!is.na(Email)) / length(Email),
+    pct.noemail = sum(is.na(Email)) / length(Email))
+    
+
+percent_email_skills <- as.matrix(pct.email.skills)
+percent_email_skills
+# Percent of respondents who have skills and left their email
+
+```
+```{r}
+pct.email.noskills <- mdata %>%
+  select(Email, Musician, Producer, Technician) %>%
+  filter(Musician=="No", Producer=="No", Technician=="No") %>%
+  summarise(
+    pct.email = sum(!is.na(Email)) / length(Email),
+    pct.noemail = sum(is.na(Email)) / length(Email))
+    
+
+percent_email_noskills <- as.matrix(pct.email.noskills)
+percent_email_noskills
+```
+```{r}
+dat2 <- data.frame(Email = factor(c("Yes", "No", "Yes","No"), levels=c("Yes","No")),
+  Frequency = factor(c(0.4545455, 0.5454545, 0.125, 0.875)),
+  Skill = factor(c("Skill", "Skill", "No Skill", "No Skill"))
+)
+
+ggplot(data=dat2, aes(x=Email, y=Frequency, fill=Skill)) +
+    geom_bar(stat="identity", position="dodge")
+```
+
+```{r}
+percent.year <- mdata %>%
+  summarise(
+    freshman.pct = sum(Year == "Freshman") / length(Year),
+     sophmore.pct = sum(Year == "Sophomore") / length(Year),
+      junior.pct = sum(Year == "Junior") / length(Year),
+       senior.pct = sum(Year == "Senior") / length(Year),
+         gradstud.pct = sum(Year == "Graduate Student") / length(Year)
+  )
+
+
+percent_year <- as.matrix(percent.year)
+barplot(percent_year, cex.names = .65, col = "lightblue")
+
+```
+```{r}
+percent.skills<- mdata %>%
+  summarise(
+    yes.pct = sum(Musician == "Yes" | Producer == "Yes" | Technician == "Yes") / length(Band),
+    no.pct = 1 - yes.pct
+  )
+
+percent_skills <- as.matrix(percent.skills)
+percent_skills
+```
+
+
+
+
+
+
+
+
